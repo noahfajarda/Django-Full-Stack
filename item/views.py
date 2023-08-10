@@ -7,18 +7,24 @@ from .models import Category, Item
 
 
 def items(request):
+    # retrieve user inputted data 'query' & 'category'
     query = request.GET.get('query', '')
     category_id = request.GET.get('category', 0)
+
+    # retrieve all categories & items
     categories = Category.objects.all()
     items = Item.objects.filter(is_sold=False)
 
+    # filter by category_id if user selected
     if category_id:
         items = items.filter(category_id=category_id)
 
+    # filter by query if user inputted
     if query:
         items = items.filter(Q(name__icontains=query) |
                              Q(description__icontains=query))
 
+    # render template passing data
     return render(request, 'item/items.html', {
         'items': items,
         'query': query,
@@ -28,9 +34,9 @@ def items(request):
 
 
 def detail(request, pk):
-    # retrieve an object from DB
+    # retrieve ONE object from DB
     item = get_object_or_404(Item, pk=pk)
-    # 3 items WHERE category matches,
+    # 3 items WHERE category matches, not including initial item
     related_items = Item.objects.filter(
         category=item.category, is_sold=False).exclude(pk=pk)[0:3]
 

@@ -13,12 +13,15 @@ def new_conversation(request, item_pk):
     # retrieve all user-created items
     item = get_object_or_404(Item, pk=item_pk)
 
+    # don't alow the user that created the item to conversate by him/herself
     if item.createdBy == request.user:
         return redirect('dashboard:index')
 
+    # find the conversation with matching 'item' & 'members'
     conversations = Conversation.objects.filter(
         item=item).filter(members__in=[request.user.id])
 
+    # if there's a conversation, render 'conversation:detail' template, passing in the data
     if conversations:
         return redirect('conversation:detail', pk=conversations.first().id)
 

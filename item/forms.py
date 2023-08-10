@@ -6,6 +6,7 @@ INPUT_CLASSES = 'w-full py-4 px-6 rounded-xl border'
 
 
 class NewItemForm(forms.ModelForm):
+    # front-end component that accepts these input fields
     class Meta:
         model = Item
         fields = ('category', 'name', 'description',
